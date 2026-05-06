@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Jathan OS"/>
+<title>Jathan OS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0a;--s1:#111;--s2:#1a1a1a;--s3:#222;--bd:#2a2a2a;
+  --acc:#e8ff47;--acc2:#ff6b35;
+  --tx:#f0f0f0;--tx2:#888;--tx3:#444;
+  --gr:#4ade80;--rd:#f87171;--bl:#60a5fa;--gd:#fbbf24;
+}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+#root{max-width:430px;margin:0 auto;min-height:100vh}
+.page{padding-bottom:80px;min-height:100vh}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--s1);border-top:1px solid var(--bd);display:flex;z-index:99;padding-bottom:env(safe-area-inset-bottom)}
+.nb{flex:1;border:none;background:none;color:var(--tx3);padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-family:inherit}
+.nb.on{color:var(--acc)}
+.nb svg{width:20px;height:20px}
+.nb span{font-size:10px;font-weight:500}
+.hdr{padding:52px 20px 16px;background:linear-gradient(var(--s1),transparent)}
+.hdr-sub{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.hdr-title{font-size:36px;font-weight:700;line-height:1;margin-top:2px}
+.hdr-title em{color:var(--acc);font-style:normal}
+.hdr-date{font-size:11px;color:var(--tx2);margin-top:4px;font-family:'Courier New',monospace}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:0 16px 12px}
+.card.al{border-left:3px solid var(--acc)}
+.ct{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx2);font-weight:600;margin-bottom:12px}
+.sg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 16px 12px}
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scard{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center}
+.sval{font-size:24px;font-weight:700;line-height:1}
+.slbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.c-gr{color:var(--gr)}.c-rd{color:var(--rd)}.c-ac{color:var(--acc)}.c-gd{color:var(--gd)}.c-bl{color:var(--bl)}
+.pw{margin-bottom:10px}
+.ph{display:flex;justify-content:space-between;margin-bottom:5px}
+.pn{font-size:13px;font-weight:500}
+.pv{font-size:11px;color:var(--tx2);font-family:'Courier New',monospace}
+.pb{height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+.pf{height:100%;border-radius:3px;transition:width .4s}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tgl{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;font-family:inherit;font-size:12px;color:var(--tx2);text-align:left;transition:all .15s;width:100%}
+.tgl.on{background:rgba(232,255,71,.08);border-color:var(--acc);color:var(--acc)}
+.tgl.bad.on{background:rgba(248,113,113,.08);border-color:var(--rd);color:var(--rd)}
+.inp{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-family:inherit;font-size:14px;outline:none;display:block}
+.inp:focus{border-color:var(--acc)}
+.inp::placeholder{color:var(--tx3)}
+.ta{resize:none;min-height:72px}
+.lbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.05em;font-weight:500;margin-bottom:5px;display:block}
+.ig{margin-bottom:12px}
+select.inp{-webkit-appearance:none;appearance:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;width:100%;transition:opacity .15s}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-a{background:var(--acc);color:#000}
+.btn-s{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}
+.btn-sm{padding:8px 14px;font-size:12px;width:auto}
+.txl{display:flex;flex-direction:column;gap:8px}
+.txi{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border-radius:8px}
+.txi-l{display:flex;align-items:center;gap:10px}
+.txi-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ic-in{background:rgba(74,222,128,.1)}.ic-ex{background:rgba(248,113,113,.1)}
+.txi-n{font-size:13px;font-weight:500}
+.txi-d{font-size:11px;color:var(--tx2)}
+.txi-a{font-family:'Courier New',monospace;font-size:13px;font-weight:500}
+.txi-a.inc{color:var(--gr)}.txi-a.exp{color:var(--rd)}
+.tri{padding:12px;background:var(--s2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--bd)}
+.tri.win{border-left-color:var(--gr)}.tri.loss{border-left-color:var(--rd)}.tri.be{border-left-color:var(--tx3)}
+.tri-h{display:flex;justify-content:space-between;margin-bottom:4px}
+.tri-p{font-weight:600;font-size:13px;font-family:'Courier New',monospace}
+.tri-r{font-family:'Courier New',monospace;font-size:13px;font-weight:600}
+.tri-d{font-size:11px;color:var(--tx2);display:flex;gap:8px;align-items:center}
+.gb{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.gA{background:rgba(74,222,128,.15);color:var(--gr)}
+.gB{background:rgba(251,191,36,.15);color:var(--gd)}
+.gC{background:rgba(248,113,113,.15);color:var(--rd)}
+.goi{padding:14px;background:var(--s2);border-radius:8px;margin-bottom:8px;cursor:pointer}
+.goi-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.goi-n{font-size:14px;font-weight:500}
+.goi-dl{font-size:11px;color:var(--tx2);font-family:'Courier New',monospace}
+.cat{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.cat-trading{background:rgba(232,255,71,.1);color:var(--acc)}
+.cat-finance{background:rgba(74,222,128,.1);color:var(--gr)}
+.cat-physique{background:rgba(96,165,250,.1);color:var(--bl)}
+.cat-lifestyle{background:rgba(251,191,36,.1);color:var(--gd)}
+.cat-mindset{background:rgba(255,107,53,.1);color:var(--acc2)}
+.ai-box{background:var(--s2);border-radius:8px;padding:16px;font-size:13px;line-height:1.75;color:var(--tx2);white-space:pre-wrap;border-left:3px solid var(--acc)}
+.ai-dots{display:flex;gap:4px;padding:12px 0;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:blink 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.tabs{display:flex;gap:4px;margin:0 16px 14px;background:var(--s1);border-radius:8px;padding:4px}
+.tab{flex:1;padding:7px;text-align:center;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;color:var(--tx2);border:none;background:none;font-family:inherit}
+.tab.on{background:var(--acc);color:#000}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--s1);border-radius:12px 12px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;max-height:90vh;overflow-y:auto}
+.modal-t{font-size:24px;font-weight:700;margin-bottom:18px}
+.empty{text-align:center;padding:28px 16px;color:var(--tx3);font-size:13px;line-height:1.6}
+.streak{display:flex;gap:4px}
+.sd{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
+.sd-on{background:var(--acc);color:#000}.sd-off{background:var(--s3);color:var(--tx3)}.sd-now{border:2px solid var(--acc);color:var(--acc)}
+.chb{margin:0 16px 12px;background:linear-gradient(135deg,rgba(232,255,71,.07),rgba(255,107,53,.07));border:1px solid rgba(232,255,71,.2);border-radius:12px;padding:14px 16px}
+.ch-day{font-size:48px;font-weight:700;line-height:1;color:var(--acc)}
+.ch-lbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.1em}
+.ch-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;text-align:center}
+.ch-v{font-family:'Courier New',monospace;font-size:13px;font-weight:500}
+.ch-l{font-size:9px;color:var(--tx3);text-transform:uppercase;margin-top:2px}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.pg{background:rgba(74,222,128,.1);color:var(--gr)}.pr{background:rgba(248,113,113,.1);color:var(--rd)}.pa{background:rgba(232,255,71,.1);color:var(--acc)}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sum-i{background:var(--s2);border-radius:8px;padding:12px}
+.sum-l{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.sum-v{font-size:20px;font-weight:700;line-height:1}
+.score-row{display:flex;align-items:center;gap:20px}
+.big-score{font-size:64px;font-weight:700;line-height:1}
+.score-lbl{font-size:13px;color:var(--tx2);margin-top:4px}
+.saved-row{padding:10px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const {useState, useEffect, useCallback, useRef} = React;
+const e = React.createElement;
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const GOALS_DEF = [
+  {id:'funded',name:'Pass Funded Account Challenge',cat:'trading',dl:'2026-06-30',ms:['Sim set up','Challenge bought','Phase 1','Phase 2']},
+  {id:'trading_income',name:'R30,000/mo Trading Income',cat:'trading',dl:'2026-09-30',ms:['R5k/mo','R15k/mo','R25k/mo','R30k/mo']},
+  {id:'income_floor',name:'R60,000/mo Total Income Floor',cat:'finance',dl:'2026-12-31',ms:['R20k Jun','R35k Sep','R50k Nov','R60k Dec']},
+  {id:'savings',name:'R200,000 Saved by Dec 2026',cat:'finance',dl:'2026-12-31',ms:['R10k','R50k','R100k','R200k']},
+  {id:'car',name:'Finance R1M Car',cat:'lifestyle',dl:'2026-12-31',ms:['Income R60k','Credit solid','Car chosen','Finance approved']},
+  {id:'bench',name:'Bench Press 110kg',cat:'physique',dl:'2026-12-31',ms:['80kg','90kg','100kg','110kg']},
+  {id:'physique',name:'Lean Physique at 77kg',cat:'physique',dl:'2026-12-31',ms:['72kg','74kg','76kg','77kg']},
+  {id:'trades200',name:'200 Logged Trades',cat:'trading',dl:'2026-12-31',ms:['50','100','150','200']},
+  {id:'zanzibar',name:'Travel to Zanzibar with Kayren',cat:'lifestyle',dl:'2026-12-31',ms:['Budget saved','Flights','Accom','Trip done']},
+  {id:'surf',name:'Learn to Surf (ride unassisted)',cat:'lifestyle',dl:'2026-12-31',ms:['First lesson','Stand up','Ride wave','Unassisted']},
+  {id:'fast72',name:'Complete 72hr Fast',cat:'mindset',dl:'2026-12-31',ms:['24hr','48hr','60hr','72hr']},
+  {id:'credit',name:'Build Strong Credit Score',cat:'finance',dl:'2026-12-31',ms:['Get card','Pay 3mo','650+','700+']},
+];
+
+const CHECKS = [
+  {id:'deep_work',lbl:'Deep Work',ic:'🧠',good:true},
+  {id:'gym',lbl:'Gym Done',ic:'💪',good:true},
+  {id:'rules',lbl:'Rules Followed',ic:'📈',good:true},
+  {id:'journal',lbl:'Journaled',ic:'📓',good:true},
+  {id:'no_phone',lbl:'No Phone Distraction',ic:'📵',good:true},
+  {id:'pre_market',lbl:'Pre-Market Prep',ic:'📊',good:true},
+  {id:'no_fomo',lbl:'No FOMO Trades',ic:'🎯',good:true},
+  {id:'protein',lbl:'High Protein Meals',ic:'🥩',good:true},
+  {id:'dopamine',lbl:'Dopamine Overload',ic:'📱',good:false},
+  {id:'emotional',lbl:'Emotional Trade',ic:'😤',good:false},
+];
+
+const CAT_COLOR = {trading:'var(--acc)',finance:'var(--gr)',physique:'var(--bl)',lifestyle:'var(--gd)',mindset:'var(--acc2)'};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const today = () => new Date().toISOString().split('T')[0];
+const fmtDate = d => { try { return new Date(d+'T12:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'short'}); } catch{ return d; }};
+const fmtMoney = n => 'R'+Math.abs(n||0).toLocaleString('en-ZA');
+const weekStart = (d) => {
+  const dt = d ? new Date(d+'T12:00:00') : new Date();
+  const day = dt.getDay();
+  dt.setDate(dt.getDate() - day + (day === 0 ? -6 : 1));
+  return dt.toISOString().split('T')[0];
+};
+const calcScore = (log) => {
+  if (!log || Object.keys(log).length === 0) return null;
+  const goods = CHECKS.filter(c => c.good);
+  const bads = CHECKS.filter(c => !c.good);
+  const pts = goods.filter(c => log[c.id]).length - bads.filter(c => log[c.id]).length;
+  return Math.round((pts / goods.length) * 100);
+};
+const scoreColor = s => s === null ? 'var(--tx3)' : s >= 80 ? 'var(--acc)' : s >= 70 ? 'var(--gd)' : 'var(--rd)';
+
+// ── Persistent Storage ────────────────────────────────────────────────────────
+const STORE_KEYS = ['logs','trades','transactions','goals','savedReviews','cStart','cTarget','cMaxDD'];
+
+function saveToStorage(key, value) {
+  try { localStorage.setItem('jos_'+key, JSON.stringify(value)); } catch(e) {}
+  if (window.storage) { window.storage.set('jos_'+key, JSON.stringify(value)).catch(()=>{}); }
+}
+
+async function loadFromStorage() {
+  const result = {};
+  for (const key of STORE_KEYS) {
+    try { const r = localStorage.getItem('jos_'+key); if (r) result[key] = JSON.parse(r); } catch(e) {}
+  }
+  if (window.storage) {
+    for (const key of STORE_KEYS) {
+      if (result[key] !== undefined) continue;
+      try { const r = await window.storage.get('jos_'+key); if (r&&r.value) result[key]=JSON.parse(r.value); } catch(e) {}
+    }
+  }
+  return result;
+}
+
+// ── SVG Icons ─────────────────────────────────────────────────────────────────
+const Icon = ({d, d2}) => e('svg',{fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:1.8,width:20,height:20},
+  e('path',{strokeLinecap:'round',strokeLinejoin:'round',d}),
+  d2 && e('path',{strokeLinecap:'round',strokeLinejoin:'round',d:d2})
+);
+
+// ── Bar Chart (pure SVG, no deps) ─────────────────────────────────────────────
+function BarChart({data}) {
+  const W=340, H=130, padL=8, padR=8, padT=8, padB=24;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  const maxV = Math.max(...data.map(d=>(d.income||0)+(d.expense||0)), 1);
+  const bw = Math.floor(iw/data.length);
+  const bwEach = Math.max(Math.floor((bw-6)/2), 2);
+  const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+
+  return e('svg',{viewBox:`0 0 ${W} ${H}`,style:{width:'100%',overflow:'visible'}},
+    data.map((d,i) => {
+      const inH = Math.round(((d.income||0)/maxV)*ih);
+      const exH = Math.round(((d.expense||0)/maxV)*ih);
+      const x = padL + i*bw;
+      return e('g',{key:i},
+        e('rect',{x:x+2, y:padT+ih-inH, width:bwEach, height:Math.max(inH,1), rx:2, fill:'#4ade80', opacity:.8}),
+        e('rect',{x:x+2+bwEach+2, y:padT+ih-exH, width:bwEach, height:Math.max(exH,1), rx:2, fill:'#f87171', opacity:.8}),
+        e('text',{x:x+bw/2, y:H-6, textAnchor:'middle', fontSize:9, fill:'#555'}, months[i])
+      );
+    })
+  );
+}
+
+// ── Home Page ─────────────────────────────────────────────────────────────────
+function PageHome({logs, transactions, goals, trades, cStart, cTarget, cMaxDD}) {
+  const td = today();
+  const log = logs[td] || {};
+  const sc = calcScore(log);
+  const wk = weekStart();
+  const wtx = transactions.filter(t => weekStart(t.date) === wk);
+  const weekIn = wtx.filter(t => t.type==='income').reduce((a,b)=>a+b.amount,0);
+  const allIn = transactions.filter(t=>t.type==='income').reduce((a,b)=>a+b.amount,0);
+  const allEx = transactions.filter(t=>t.type==='expense').reduce((a,b)=>a+b.amount,0);
+  const netSaved = allIn - allEx;
+  const tot = trades.length;
+  const winRate = tot>0 ? Math.round((trades.filter(t=>t.result==='win').length/tot)*100) : 0;
+
+  const DAYS = ['M','T','W','T','F','S','S'];
+  const last7 = Array.from({length:7}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate()-6+i);
+    const k = d.toISOString().split('T')[0];
+    return {lbl: DAYS[d.getDay()===0?6:d.getDay()-1], sc: calcScore(logs[k]), now: k===td};
+  });
+
+  const cDay = cStart ? Math.floor((Date.now()-new Date(cStart+'T00:00:00').getTime())/86400000)+1 : null;
+  const cPL = cStart ? trades.filter(t=>t.date>=cStart).reduce((a,b)=>a+(b.pnl||0),0) : 0;
+
+  return e('div',null,
+    e('div',{className:'hdr'},
+      e('div',{className:'hdr-sub'},'Welcome back'),
+      e('div',{className:'hdr-title'},e('em',null,'Jathan'),' OS'),
+      e('div',{className:'hdr-date'},new Date().toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'}))
+    ),
+
+    cDay && e('div',{className:'chb'},
+      e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+        e('div',null,
+          e('div',{className:'ch-lbl'},'Funded Challenge — Day'),
+          e('div',{className:'ch-day'},String(cDay))
+        ),
+        e('span',{className:'pill '+(cPL>=0?'pg':'pr')},(cPL>=0?'▲ ':'▼ ')+fmtMoney(Math.abs(cPL)))
+      ),
+      e('div',{className:'ch-row'},
+        e('div',null,e('div',{className:'ch-v',style:{color:'var(--acc)'}},fmtMoney(cTarget)),e('div',{className:'ch-l'},'Target')),
+        e('div',null,e('div',{className:'ch-v'},cTarget?Math.round((cPL/cTarget)*100)+'%':'0%'),e('div',{className:'ch-l'},'Progress')),
+        e('div',null,e('div',{className:'ch-v',style:{color:'var(--rd)'}},fmtMoney(cMaxDD)),e('div',{className:'ch-l'},'Max DD'))
+      )
+    ),
+
+    e('div',{className:'card al'},
+      e('div',{className:'ct'},"Today's Score"),
+      e('div',{className:'score-row'},
+        e('div',null,
+          e('div',{className:'big-score',style:{color:scoreColor(sc)}}, sc===null?'—':String(sc)),
+          e('div',{className:'score-lbl'}, sc===null?'Log your day below':sc>=80?'ON TRACK 🔥':sc>=70?'Slipping ⚠️':'Off track ❌')
+        ),
+        e('div',{className:'streak',style:{marginLeft:'auto'}},
+          ...last7.map((d,i)=>e('div',{key:i,className:'sd '+(d.now?'sd-now':d.sc===null?'sd-off':d.sc>=70?'sd-on':'sd-off')},d.lbl))
+        )
+      )
+    ),
+
+    e('div',{className:'sg3'},
+      e('div',{className:'scard'},e('div',{className:'sval c-gr'},fmtMoney(weekIn)),e('div',{className:'slbl'},'This Week')),
+      e('div',{className:'scard'},e('div',{className:'sval c-ac'},winRate+'%'),e('div',{className:'slbl'},'Win Rate')),
+      e('div',{className:'scard'},e('div',{className:'sval '+(netSaved>=0?'c-gr':'c-rd')},fmtMoney(netSaved)),e('div',{className:'slbl'},'Net Saved'))
+    ),
+
+    e('div',{className:'card'},
+      e('div',{className:'ct'},'Goal Progress'),
+      ...goals.slice(0,4).map(g => {
+        const pct = Math.min(100, g.pct||0);
+        return e('div',{key:g.id,className:'pw'},
+          e('div',{className:'ph'},e('div',{className:'pn'},g.name),e('div',{className:'pv'},pct+'%')),
+          e('div',{className:'pb'},e('div',{className:'pf',style:{width:pct+'%',background:CAT_COLOR[g.cat]}}))
+        );
+      })
+    ),
+
+    e('div',{className:'card'},
+      e('div',{className:'ct'},'Recent Transactions'),
+      transactions.length===0
+        ? e('div',{className:'empty'},'No transactions yet.')
+        : e('div',{className:'txl'},
+            ...[...transactions].reverse().slice(0,5).map((t,i) =>
+              e('div',{key:i,className:'txi'},
+                e('div',{className:'txi-l'},
+                  e('div',{className:'txi-ic '+(t.type==='income'?'ic-in':'ic-ex')}, t.type==='income'?'💰':'💸'),
+                  e('div',null, e('div',{className:'txi-n'},t.label), e('div',{className:'txi-d'},fmtDate(t.date)))
+                ),
+                e('div',{className:'txi-a '+(t.type==='income'?'inc':'exp')}, (t.type==='income'?'+':'-')+fmtMoney(t.amount))
+              )
+            )
+          )
+    )
+  );
+}
+
+// ── Daily Log Page ────────────────────────────────────────────────────────────
+function PageDaily({logs, setLogs, trades, setTrades}) {
+  const td = today();
+  const log = logs[td] || {};
+  const [showModal, setShowModal] = useState(false);
+  // Local form state — never triggers page re-render
+  const [pair, setPair] = useState('NAS100');
+  const [dir, setDir] = useState('long');
+  const [result, setResult] = useState('win');
+  const [pnl, setPnl] = useState('');
+  const [grade, setGrade] = useState('A');
+  const [notes, setNotes] = useState('');
+
+  const toggle = useCallback((id) => {
+    const updated = {...log, [id]: !log[id]};
+    const newLogs = {...logs, [td]: updated};
+    setLogs(newLogs);
+    saveToStorage('logs', newLogs);
+  }, [log, logs, td]);
+
+  const saveTrade = () => {
+    if (!pnl) return;
+    const t = {pair, dir, result, pnl:parseFloat(pnl), grade, notes, date:td, id:Date.now()};
+    const updated = [...trades, t];
+    setTrades(updated);
+    saveToStorage('trades', updated);
+    setPair('NAS100'); setDir('long'); setResult('win'); setPnl(''); setGrade('A'); setNotes('');
+    setShowModal(false);
+  };
+
+  const sc = calcScore(log);
+  const todayTrades = trades.filter(t => t.date===td);
+
+  return e('div',null,
+    e('div',{className:'hdr'},
+      e('div',{className:'hdr-sub'},fmtDate(td)),
+      e('div',{className:'hdr-title'},'Daily ',e('em',null,'Log'))
+    ),
+
+    e('div',{className:'card',style:{textAlign:'center'}},
+      e('div',{className:'big-score',style:{color:scoreColor(sc)}}, sc===null?'—':sc+'%'),
+      e('div',{className:'score-lbl',style:{textAlign:'center',marginTop:4}},
+        sc===null?'Tap your non-negotiables below':sc>=80?'Executing ✅':sc>=70?'Slipping — tighten up ⚠️':'Off track — identify why ❌')
+    ),
+
+    e('div',{className:'card'},
+      e('div',{className:'ct'},'Non-Negotiables'),
+      e('div',{className:'tg'},
+        ...CHECKS.map(c => {
+          const on = !!log[c.id];
+          return e('button',{key:c.id, className:'tgl'+(c.good?'':' bad')+(on?' on':''), onClick:()=>toggle(c.id)},
+            e('span',{style:{fontSize:15}},c.ic), c.lbl);
+        })
+      )
+    ),
+
+    e('div',{className:'card'},
+      e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
+        e('div',{className:'ct',style:{marginBottom:0}},"Today's Trades"),
+        e('button',{className:'btn btn-a btn-sm',onClick:()=>setShowModal(true)},'+ Log Trade')
+      ),
+      todayTrades.length===0
+        ? e('div',{className:'empty'},"No trades today.\nNo setup = sit on hands = winning day.")
+        : e('div',null, ...todayTrades.map((t,i)=>
+            e('div',{key:i,className:'tri '+t.result},
+              e('div',{className:'tri-h'},
+                e('div',{className:'tri-p'},t.pair+' '+(t.dir==='long'?'▲':'▼')),
+                e('div',{className:'tri-r',style:{color:t.result==='win'?'var(--gr)':t.result==='loss'?'var(--rd)':'var(--tx3)'}},
+                  (t.pnl>=0?'+':'')+fmtMoney(t.pnl))
+              ),
+              e('div',{className:'tri-d'}, e('span',{className:'gb g'+t.grade},'Grade '+t.grade), t.notes&&e('span',null,t.notes))
+            )
+          ))
+    ),
+
+    showModal && e('div',{className:'overlay',onClick:()=>setShowModal(false)},
+      e('div',{className:'modal',onClick:ev=>ev.stopPropagation()},
+        e('div',{className:'modal-t'},'Log Trade'),
+        e('div',{className:'ig'},
+          e('label',{className:'lbl'},'Pair'),
+          e('select',{className:'inp',value:pair,onChange:ev=>setPair(ev.target.value)},
+            ...['NAS100','SPX500','US30','XAUUSD','EURUSD','GBPUSD'].map(p=>e('option',{key:p,value:p},p))
+          )
+        ),
+        e('div',{className:'sg2 ig'},
+          e('div',null,
+            e('label',{className:'lbl'},'Direction'),
+            e('select',{className:'inp',value:dir,onChange:ev=>setDir(ev.target.value)},
+              e('option',{value:'long'},'Long ▲'), e('option',{value:'short'},'Short ▼')
+            )
+          ),
+          e('div',null,
+            e('label',{className:'lbl'},'Result'),
+            e('select',{className:'inp',value:result,onChange:ev=>setResult(ev.target.value)},
+              e('option',{value:'win'},'Win'), e('option',{value:'loss'},'Loss'), e('option',{value:'be'},'Break Even')
+            )
+          )
+        ),
+        e('div',{className:'sg2 ig'},
+          e('div',null,
+            e('label',{className:'lbl'},'P&L (R)'),
+            e('input',{className:'inp',type:'number',placeholder:'e.g. 350',value:pnl,onChange:ev=>setPnl(ev.target.value)})
+          ),
+          e('div',null,
+            e('label',{className:'lbl'},'Grade'),
+            e('select',{className:'inp',value:grade,onChange:ev=>setGrade(ev.target.value)},
+              e('option',{value:'A'},'A — Full rules'),
+              e('option',{value:'B'},'B — Minor deviation'),
+              e('option',{value:'C'},'C — Emotional')
+            )
+          )
+        ),
+        e('div',{className:'ig'},
+          e('label',{className:'lbl'},'Notes'),
+          e('textarea',{className:'inp ta',placeholder:'Setup, what you saw...',value:notes,onChange:ev=>setNotes(ev.target.value)})
+        ),
+        e('button',{className:'btn btn-a',onClick:saveTrade},'Save Trade')
+      )
+    )
+  );
+}
+
+// ── Finance Page ──────────────────────────────────────────────────────────────
+function PageFinance({transactions, setTransactions}) {
+  const [tab, setTab] = useState('log');
+  const [type, setType] = useState('income');
+  const [amount, setAmount] = useState('');
+  const [label, setLabel] = useState('');
+  const [date, setDate] = useState(today());
+
+  const save = () => {
+    if (!amount || !label) return;
+    const t = {type, amount:parseFloat(amount), label, date, id:Date.now()};
+    const updated = [...transactions, t];
+    setTransactions(updated);
+    saveToStorage('transactions', updated);
+    setAmount(''); setLabel('');
+  };
+
+  const now = new Date();
+  const mth = now.getMonth(), yr = now.getFullYear();
+  const monthTx = transactions.filter(t=>{ const d=new Date(t.date+'T12:00:00'); return d.getMonth()===mth&&d.getFullYear()===yr; });
+  const yearTx = transactions.filter(t=>new Date(t.date+'T12:00:00').getFullYear()===yr);
+  const calc = txs => ({inc:txs.filter(t=>t.type==='income').reduce((a,b)=>a+b.amount,0), exp:txs.filter(t=>t.type==='expense').reduce((a,b)=>a+b.amount,0)});
+  const mo = calc(monthTx), yr2 = calc(yearTx);
+  const net = yr2.inc - yr2.exp;
+
+  const chartData = Array.from({length:12}, (_,i) => {
+    const txs = transactions.filter(t=>{ const d=new Date(t.date+'T12:00:00'); return d.getMonth()===i&&d.getFullYear()===yr; });
+    const c = calc(txs);
+    return {income:c.inc, expense:c.exp};
+  });
+
+  return e('div',null,
+    e('div',{className:'hdr'},
+      e('div',{className:'hdr-sub'},'Track every rand'),
+      e('div',{className:'hdr-title'},'Finance ',e('em',null,'Hub'))
+    ),
+    e('div',{className:'tabs'},
+      ...['log','overview','history'].map(t=>
+        e('button',{key:t,className:'tab'+(tab===t?' on':''),onClick:()=>setTab(t)},
+          t.charAt(0).toUpperCase()+t.slice(1))
+      )
+    ),
+
+    tab==='log' && e('div',null,
+      e('div',{className:'card'},
+        e('div',{className:'ct'},'Log Transaction'),
+        e('div',{className:'sg2',style:{marginBottom:12}},
+          e('button',{className:'btn '+(type==='income'?'btn-a':'btn-s'),onClick:()=>setType('income')},'💰 Income'),
+          e('button',{className:'btn '+(type==='expense'?'btn-a':'btn-s'),onClick:()=>setType('expense')},'💸 Expense')
+        ),
+        e('div',{className:'ig'},
+          e('label',{className:'lbl'},'Description'),
+          e('input',{className:'inp',placeholder:'e.g. Trading payout, Tutoring, Groceries',value:label,onChange:ev=>setLabel(ev.target.value)})
+        ),
+        e('div',{className:'sg2 ig'},
+          e('div',null,
+            e('label',{className:'lbl'},'Amount (R)'),
+            e('input',{className:'inp',type:'number',placeholder:'0',value:amount,onChange:ev=>setAmount(ev.target.value)})
+          ),
+          e('div',null,
+            e('label',{className:'lbl'},'Date'),
+            e('input',{className:'inp',type:'date',value:date,onChange:ev=>setDate(ev.target.value)})
+          )
+        ),
+        e('button',{className:'btn btn-a',onClick:save},'Save Transaction')
+      ),
+      e('div',{className:'sg3'},
+        e('div',{className:'scard'},e('div',{className:'sval c-gr'},fmtMoney(mo.inc)),e('div',{className:'slbl'},'Month In')),
+        e('div',{className:'scard'},e('div',{className:'sval c-rd'},fmtMoney(mo.exp)),e('div',{className:'slbl'},'Month Out')),
+        e('div',{className:'scard'},e('div',{className:'sval '+(mo.inc-mo.exp>=0?'c-gr':'c-rd')},fmtMoney(Math.abs(mo.inc-mo.exp))),e('div',{className:'slbl'},'Net'))
+      )
+    ),
+
+    tab==='overview' && e('div',null,
+      e('div',{className:'card'},
+        e('div',{className:'ct'},'Savings Goal — R200k by Dec 2026'),
+        e('div',{className:'pw'},
+          e('div',{className:'ph'},e('div',{className:'pn'},'Progress'),e('div',{className:'pv'},Math.max(0,Math.round((net/200000)*100))+'%')),
+          e('div',{className:'pb',style:{height:10}},e('div',{className:'pf',style:{width:Math.max(0,Math.min(100,(net/200000)*100))+'%',background:'var(--gr)'}}))
+        ),
+        e('div',{style:{fontSize:11,color:'var(--tx3)',fontFamily:'Courier New'}},fmtMoney(net)+' of R200,000')
+      ),
+      e('div',{className:'card'},
+        e('div',{className:'ct'},'2026 Summary'),
+        e('div',{className:'sum-grid'},
+          e('div',{className:'sum-i'},e('div',{className:'sum-l'},'Total Income'),e('div',{className:'sum-v c-gr'},fmtMoney(yr2.inc))),
+          e('div',{className:'sum-i'},e('div',{className:'sum-l'},'Total Expenses'),e('div',{className:'sum-v c-rd'},fmtMoney(yr2.exp))),
+          e('div',{className:'sum-i'},e('div',{className:'sum-l'},'Net Saved'),e('div',{className:'sum-v '+(net>=0?'c-gr':'c-rd')},fmtMoney(net))),
+          e('div',{className:'sum-i'},e('div',{className:'sum-l'},'Avg/Month'),e('div',{className:'sum-v c-ac'},fmtMoney(Math.round(yr2.inc/Math.max(1,mth+1)))))
+        )
+      ),
+      e('div',{className:'card'},
+        e('div',{className:'ct'},'Income vs Expenses (2026)'),
+        e(BarChart, {data:chartData})
+      )
+    ),
+
+    tab==='history' && e('div',{className:'card'},
+      e('div',{className:'ct'},'All Transactions'),
+      transactions.length===0
+        ? e('div',{className:'empty'},'No transactions yet.')
+        : e('div',{className:'txl'},
+            ...[...transactions].reverse().map((t,i)=>
+              e('div',{key:i,className:'txi'},
+                e('div',{className:'txi-l'},
+                  e('div',{className:'txi-ic '+(t.type==='income'?'ic-in':'ic-ex')},t.type==='income'?'💰':'💸'),
+                  e('div',null,e('div',{className:'txi-n'},t.label),e('div',{className:'txi-d'},fmtDate(t.date)))
+                ),
+                e('div',{className:'txi-a '+(t.type==='income'?'inc':'exp')},(t.type==='income'?'+':'-')+fmtMoney(t.amount))
+              )
+            )
+          )
+    )
+  );
+}
+
+// ── Goals Page ────────────────────────────────────────────────────────────────
+function PageGoals({goals, setGoals, cStart, setCStart, cTarget, setCTarget, cMaxDD, setCMaxDD}) {
+  const [openId, setOpenId] = useState(null);
+  const [inputVal, setInputVal] = useState('');
+
+  const updateGoal = (id, val) => {
+    const updated = goals.map(g => g.id===id ? {...g, pct:Math.min(100,Math.max(0,parseFloat(val)||0))} : g);
+    setGoals(updated);
+    saveToStorage('goals', updated);
+    setOpenId(null);
+  };
+
+  const saveChallenge = () => {
+    saveToStorage('cStart', cStart);
+    saveToStorage('cTarget', parseFloat(cTarget)||500);
+    saveToStorage('cMaxDD', parseFloat(cMaxDD)||500);
+    alert('Challenge settings saved!');
+  };
+
+  return e('div',null,
+    e('div',{className:'hdr'},
+      e('div',{className:'hdr-sub'},'Your 2026 roadmap'),
+      e('div',{className:'hdr-title'},'Goal ',e('em',null,'Map'))
+    ),
+
+    e('div',{className:'card al'},
+      e('div',{className:'ct'},'⚡ Funded Challenge Settings'),
+      e('div',{className:'sg2 ig'},
+        e('div',null,
+          e('label',{className:'lbl'},'Start Date'),
+          e('input',{className:'inp',type:'date',value:cStart,onChange:ev=>setCStart(ev.target.value)})
+        ),
+        e('div',null,
+          e('label',{className:'lbl'},'Profit Target (R)'),
+          e('input',{className:'inp',type:'number',value:cTarget,onChange:ev=>setCTarget(ev.target.value)})
+        )
+      ),
+      e('div',{className:'ig'},
+        e('label',{className:'lbl'},'Max Drawdown (R)'),
+        e('input',{className:'inp',type:'number',value:cMaxDD,onChange:ev=>setCMaxDD(ev.target.value)})
+      ),
+      e('button',{className:'btn btn-a',onClick:saveChallenge},'Save Challenge Settings')
+    ),
+
+    e('div',{className:'card'},
+      e('div',{className:'ct'},'All Goals — Tap to Update'),
+      ...goals.map(g => {
+        const pct = Math.min(100, g.pct||0);
+        const open = openId === g.id;
+        const nextM = pct<100 ? g.ms[Math.min(Math.floor(pct/25), g.ms.length-1)] : null;
+        return e('div',{key:g.id,className:'goi',onClick:()=>{ setOpenId(open?null:g.id); setInputVal(String(pct)); }},
+          e('div',{className:'goi-h'},
+            e('div',null, e('div',{className:'goi-n'},g.name), e('div',{className:'goi-dl'},'→ '+fmtDate(g.dl))),
+            e('span',{className:'cat cat-'+g.cat},g.cat)
+          ),
+          nextM && e('div',{style:{fontSize:11,color:'var(--tx2)',marginBottom:6}},'Next: '+nextM),
+          e('div',{className:'pb',style:{marginBottom:4}}, e('div',{className:'pf',style:{width:pct+'%',background:CAT_COLOR[g.cat]}})),
+          e('div',{style:{display:'flex',justifyContent:'space-between',fontSize:10,color:'var(--tx3)'}},
+            e('span',null,pct>=100?'✅ Complete':'In progress'), e('span',null,pct+'%')
+          ),
+          open && e('div',{style:{marginTop:12},onClick:ev=>ev.stopPropagation()},
+            e('div',{style:{display:'flex',gap:8}},
+              e('input',{className:'inp',type:'number',min:0,max:100,placeholder:'0–100',value:inputVal,
+                onChange:ev=>setInputVal(ev.target.value),style:{flex:1}}),
+              e('button',{className:'btn btn-a btn-sm',onClick:()=>updateGoal(g.id,inputVal)},'Update')
+            )
+          )
+        );
+      })
+    )
+  );
+}
+
+// ── AI Review Page ────────────────────────────────────────────────────────────
+function PageAI({logs, trades, transactions, goals, savedReviews, setSavedReviews}) {
+  const [review, setReview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [period, setPeriod] = useState('week');
+
+  const generate = async () => {
+    setLoading(true); setReview('');
+    const now = new Date();
+    const wk = weekStart();
+    const isWeek = period==='week';
+
+    const pLogs = Object.entries(logs).filter(([d])=>isWeek?weekStart(d)===wk:new Date(d+'T12:00:00').getMonth()===now.getMonth());
+    const scores = pLogs.map(([,l])=>calcScore(l)).filter(s=>s!==null);
+    const avg = scores.length>0 ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+    const pTrades = trades.filter(t=>isWeek?weekStart(t.date)===wk:new Date(t.date+'T12:00:00').getMonth()===now.getMonth());
+    const wins = pTrades.filter(t=>t.result==='win').length;
+    const losses = pTrades.filter(t=>t.result==='loss').length;
+    const pnl = pTrades.reduce((a,b)=>a+(b.pnl||0),0);
+    const grA = pTrades.filter(t=>t.grade==='A').length;
+    const grC = pTrades.filter(t=>t.grade==='C').length;
+    const pTx = transactions.filter(t=>isWeek?weekStart(t.date)===wk:new Date(t.date+'T12:00:00').getMonth()===now.getMonth());
+    const income = pTx.filter(t=>t.type==='income').reduce((a,b)=>a+b.amount,0);
+    const expense = pTx.filter(t=>t.type==='expense').reduce((a,b)=>a+b.amount,0);
+    const checkSnap = CHECKS.map(c=>c.lbl+': '+pLogs.filter(([,l])=>l[c.id]).length+'/'+pLogs.length).join(', ');
+    const goalSnap = goals.slice(0,6).map(g=>g.name+': '+(g.pct||0)+'%').join(', ');
+    const W = isWeek?'WEEK':'MONTH';
+
+    const prompt = `You are Jathan's ruthless performance mentor. He is 18, South African, gap year, building toward financial freedom via ICT trading (NAS100/SPX), maths tutoring, and AI/SEO skills. Goals: pass funded challenge, R30k+/month trading, R200k saved by Dec 2026, finance R1m car, bench 110kg, travel Zanzibar with girlfriend Kayren.
+
+Non-negotiables: deep work daily, gym 4x/week, follow all trading rules (max 2 trades/session, max 1 on Mondays, 2 losses=stop, no FOMO/emotional trades, log every trade). Score system: 80%+ = on track, under 70% = slipping.
+
+${W} DATA:
+- Avg daily score: ${avg!==null?avg+'%':'not enough data'} (${scores.length} days logged)
+- Daily checks: ${checkSnap}
+- Trades: ${pTrades.length} total, ${wins}W/${losses}L, P&L: R${pnl.toFixed(0)}, Grade A: ${grA}, Grade C: ${grC}
+- Finance: Income R${income}, Expenses R${expense}, Net R${income-expense}
+- Goals: ${goalSnap}
+
+Write a direct, no-fluff ${period} review with these sections:
+1. VERDICT (blunt 1-2 sentences)
+2. WHAT YOU EXECUTED WELL
+3. WHERE YOU SLIPPED
+4. THE ONE THING TO FIX THIS ${W}
+5. TARGETS FOR NEXT ${W}
+
+Under 300 words. Plain text only.`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text || 'No response received.';
+      setReview(text);
+      const rev = {period, date:today(), text, pnl, score:avg, income};
+      const updated = [...savedReviews, rev].slice(-20);
+      setSavedReviews(updated);
+      saveToStorage('savedReviews', updated);
+    } catch(err) {
+      setReview('Failed to generate. Check your connection and try again.');
+    }
+    setLoading(false);
+  };
+
+  const downloadTxt = () => {
+    if (!review) return;
+    const content = 'Jathan OS — '+period+' Review\n'+new Date().toLocaleDateString('en-ZA')+'\n\n'+review;
+    const blob = new Blob([content], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='jathan-review-'+today()+'.txt';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  };
+
+  return e('div',null,
+    e('div',{className:'hdr'},
+      e('div',{className:'hdr-sub'},'Powered by Claude AI'),
+      e('div',{className:'hdr-title'},'AI ',e('em',null,'Review'))
+    ),
+    e('div',{className:'card al'},
+      e('div',{className:'ct'},'Generate Review'),
+      e('div',{className:'sg2',style:{marginBottom:12}},
+        e('button',{className:'btn '+(period==='week'?'btn-a':'btn-s'),onClick:()=>setPeriod('week')},'📅 This Week'),
+        e('button',{className:'btn '+(period==='month'?'btn-a':'btn-s'),onClick:()=>setPeriod('month')},'📆 This Month')
+      ),
+      e('button',{className:'btn btn-a',onClick:generate,disabled:loading}, loading?'Analysing...':'Generate '+period.charAt(0).toUpperCase()+period.slice(1)+' Review')
+    ),
+    loading && e('div',{className:'card'},
+      e('div',{className:'ai-dots'},
+        e('div',{className:'dot'}),e('div',{className:'dot'}),e('div',{className:'dot'}),
+        e('span',{style:{marginLeft:8,fontSize:13,color:'var(--tx2)'}},'Reviewing your data...')
+      )
+    ),
+    review && e('div',{className:'card'},
+      e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
+        e('div',{className:'ct',style:{marginBottom:0}},'Your Review'),
+        e('button',{className:'btn btn-s btn-sm',onClick:downloadTxt},'⬇ Download')
+      ),
+      e('div',{className:'ai-box'},review)
+    ),
+    savedReviews.length>0 && e('div',{className:'card'},
+      e('div',{className:'ct'},'Past Reviews'),
+      ...[...savedReviews].reverse().slice(0,5).map((r,i)=>
+        e('div',{key:i,className:'saved-row',onClick:()=>setReview(r.text)},
+          e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
+            e('span',{style:{fontSize:13,fontWeight:500}},r.period.charAt(0).toUpperCase()+r.period.slice(1)+' Review'),
+            e('span',{style:{fontSize:11,color:'var(--tx2)',fontFamily:'Courier New'}},fmtDate(r.date))
+          ),
+          e('div',{style:{display:'flex',gap:8,marginTop:4}},
+            r.score!=null && e('span',{className:'pill '+(r.score>=80?'pg':r.score>=70?'pa':'pr')},r.score+'%'),
+            r.income>0 && e('span',{className:'pill pg'},'+'+fmtMoney(r.income))
+          )
+        )
+      )
+    )
+  );
+}
+
+// ── App Shell ─────────────────────────────────────────────────────────────────
+function App() {
+  const [ready, setReady] = useState(false);
+  const [page, setPage] = useState('home');
+  const [logs, setLogs] = useState({});
+  const [trades, setTrades] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [goals, setGoals] = useState(GOALS_DEF.map(g=>({...g, pct:0})));
+  const [savedReviews, setSavedReviews] = useState([]);
+  const [cStart, setCStart] = useState('');
+  const [cTarget, setCTarget] = useState(500);
+  const [cMaxDD, setCMaxDD] = useState(500);
+
+  // Load persisted data on mount
+  useEffect(() => {
+    loadFromStorage().then(data => {
+      if (data.logs) setLogs(data.logs);
+      if (data.trades) setTrades(data.trades);
+      if (data.transactions) setTransactions(data.transactions);
+      if (data.goals && data.goals.length===GOALS_DEF.length) setGoals(data.goals);
+      if (data.savedReviews) setSavedReviews(data.savedReviews);
+      if (data.cStart) setCStart(data.cStart);
+      if (data.cTarget) setCTarget(data.cTarget);
+      if (data.cMaxDD) setCMaxDD(data.cMaxDD);
+      setReady(true);
+    });
+  }, []);
+
+  if (!ready) return e('div',{style:{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',color:'var(--tx2)',fontSize:14}},'Loading...');
+
+  const NAV = [
+    {id:'home',lbl:'Home',d:'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'},
+    {id:'daily',lbl:'Daily',d:'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0'},
+    {id:'finance',lbl:'Finance',d:'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0'},
+    {id:'goals',lbl:'Goals',d:'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'},
+    {id:'ai',lbl:'Review',d:'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'},
+  ];
+
+  const pages = {
+    home: e(PageHome,{logs,transactions,goals,trades,cStart,cTarget,cMaxDD}),
+    daily: e(PageDaily,{logs,setLogs,trades,setTrades}),
+    finance: e(PageFinance,{transactions,setTransactions}),
+    goals: e(PageGoals,{goals,setGoals,cStart,setCStart,cTarget,setCTarget,cMaxDD,setCMaxDD}),
+    ai: e(PageAI,{logs,trades,transactions,goals,savedReviews,setSavedReviews}),
+  };
+
+  return e('div',{id:'shell'},
+    e('div',{className:'page'}, pages[page]),
+    e('nav',null,
+      ...NAV.map(n => e('button',{key:n.id,className:'nb'+(page===n.id?' on':''),onClick:()=>setPage(n.id)},
+        e('svg',{fill:'none',viewBox:'0 0 24 24',stroke:'currentColor',strokeWidth:1.8,width:20,height:20},
+          e('path',{strokeLinecap:'round',strokeLinejoin:'round',d:n.d})
+        ),
+        e('span',null,n.lbl)
+      ))
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+</script>
+</body>
+</html>
